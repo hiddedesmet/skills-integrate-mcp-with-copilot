@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const activitiesList = document.getElementById("activities-list");
   const activitySelect = document.getElementById("activity");
-  const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
   // Function to fetch activities from API
@@ -42,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <button class="register-btn" data-activity="${name}">Register Student</button>
           <div class="participants-container">
             ${participantsHTML}
           </div>
@@ -59,6 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
       // Add event listeners to delete buttons
       document.querySelectorAll(".delete-btn").forEach((button) => {
         button.addEventListener("click", handleUnregister);
+      });
+
+      // Add event listener for the new register button
+      document.querySelectorAll(".register-btn").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          const activity = event.target.getAttribute("data-activity");
+          const email = prompt("Enter student email:");
+          if (email) {
+            signupForActivity(activity, email);
+          }
+        });
       });
     } catch (error) {
       activitiesList.innerHTML =
@@ -110,13 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Handle form submission
-  signupForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const activity = document.getElementById("activity").value;
-
+  // Handle signup functionality
+  async function signupForActivity(activity, email) {
     try {
       const response = await fetch(
         `/activities/${encodeURIComponent(
@@ -132,7 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
-        signupForm.reset();
 
         // Refresh activities list to show updated participants
         fetchActivities();
@@ -153,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       messageDiv.classList.remove("hidden");
       console.error("Error signing up:", error);
     }
-  });
+  }
 
   // Initialize app
   fetchActivities();

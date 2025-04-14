@@ -33,6 +33,7 @@ main {
   flex-wrap: wrap;
   gap: 30px;
   justify-content: center;
+  flex-direction: column-reverse;
 }
 
 @media (min-width: 768px) {
